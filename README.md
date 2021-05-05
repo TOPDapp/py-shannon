@@ -1,6 +1,7 @@
 # py-shannon
 
 [![PyPI](https://img.shields.io/pypi/v/py-shannon?style=for-the-badge)](https://pypi.org/project/py-shannon/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000?style=for-the-badge)](https://github.com/psf/black)
 
 Pure Python implementation of Shannon stream cipher. No-brainer port of [shannon](https://github.com/twonky4/shannon).
 
