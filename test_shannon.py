@@ -25,3 +25,23 @@ def test_encrypt(message: bytes, exp_encrypted: bytes, exp_mac: bytes):
 
     assert encrypted == exp_encrypted
     assert mac == exp_mac
+
+
+@pytest.mark.parametrize(
+    ["encrypted", "exp_decrypted", "exp_mac"],
+    [
+        (
+            b"\x94\x81\xe5\xa9\x5f\x93\x5e\xcb\x6c\xb5\x24",
+            b"Hello World",
+            b"\x43\x23\x86\x24\xf3\xc9\x0c\x58\x79\xf4\xd3\xef\x83\x98\x2e\x4e",
+        )
+    ],
+)
+def test_decrypt(encrypted: bytes, exp_decrypted: bytes, exp_mac: bytes):
+    shannon = Shannon(KEY)
+
+    decrypted = shannon.decrypt(encrypted)
+    mac = shannon.finish()
+
+    assert decrypted == exp_decrypted
+    assert mac == exp_mac
