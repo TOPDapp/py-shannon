@@ -264,6 +264,51 @@ class Shannon:
 
         return bytes(buf)
 
+    # noinspection DuplicatedCode
+    def decrypt(self, buf: bytes, length: int = None) -> bytes:
+        buf = list(buf)
+        n = length or len(buf)
+        i = j = t = 0
+
+        if self.nbuf != 0:
+            while self.nbuf != 0 and n != 0:
+                buf[i] ^= (self.sbuf >> (32 - self.nbuf)) & 0xFF
+                self.mbuf ^= (buf[i] & 0xFF) << (32 - self.nbuf)
+                i += 1
+                self.nbuf -= 8
+                n -= 1
+
+            if self.nbuf != 0:
+                return bytes(buf)
+
+            self._mac(self.mbuf)
+
+        j = n & ~0x03
+
+        while i < j:
+            self._cycle()
+            t = shift4(buf, i)
+            t ^= self.sbuf
+            self._mac(t)
+            pack4(buf, i, t)
+            i += 4
+
+        n &= 0x03
+
+        if n != 0:
+            self._cycle()
+            self.mbuf = 0
+            self.nbuf = 32
+
+            while self.nbuf != 0 and n != 0:
+                buf[i] ^= (self.sbuf >> (32 - self.nbuf)) & 0xFF
+                self.mbuf ^= (buf[i] & 0xFF) << (32 - self.nbuf)
+                i += 1
+                self.nbuf -= 8
+                n -= 1
+
+        return bytes(buf)
+
     def finish(self, length: int = 16) -> bytes:
         buf = [0x00] * length
         n = length
