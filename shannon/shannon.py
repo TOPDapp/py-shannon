@@ -132,14 +132,14 @@ class Shannon:
         for i in range(0, N):
             self.R[i] ^= self.CRC[i]
 
-    def _set_key(self, key: bytes):
+    def set_key(self, key: bytes):
         self._init_state()
         self._load_key(key)
         self._gen_konst()
         self._save_state()
         self.nbuf = 0
 
-    def _set_nonce(self, nonce: bytes):
+    def set_nonce(self, nonce: bytes):
         self._reload_state()
         self.konst = INITKONST
         self._load_key(nonce)
@@ -268,7 +268,7 @@ class Shannon:
     def decrypt(self, buf: bytes, length: int = None) -> bytes:
         buf = list(buf)
         n = length or len(buf)
-        i = j = t = 0
+        i = 0
 
         if self.nbuf != 0:
             while self.nbuf != 0 and n != 0:
@@ -342,4 +342,4 @@ class Shannon:
         return bytes(buf)
 
     def __init__(self, key: bytes) -> None:
-        self._set_key(key)
+        self.set_key(key)
